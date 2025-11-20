@@ -40,7 +40,7 @@ services:
 
   # 3. FastAPI приложение
   my_fastapi_app:
-    build: .
+    build: ./backend
     container_name: fastapi_backend
     ports:
       - "8000:8000"
@@ -57,4 +57,5 @@ volumes:
   redis_storage:
     driver: local
   qdrant_storage:
+
     driver: local
