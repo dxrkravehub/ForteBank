@@ -1,0 +1,60 @@
+version: '3.x' # old-school practice :D
+services:
+  # 1. Qdrant (Vector Database)
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant_vector_db 
+    restart: always 
+    ports:
+      # Порт для REST и gRPC API
+      - "6333:6333"
+      # Порт для веб-интерфейса
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    environment:
+      # Думаю что локально SERVICE API KEY использовать не очень уместно
+      # QDRANT__SERVICE__API_KEY: "your_secure_api_key"
+      QDRANT__SERVICE__ENABLE_TELEMETRY: "false"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # 2. Redis
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis_cache_db
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_storage:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # 3. FastAPI приложение
+  my_fastapi_app:
+    build: .
+    container_name: fastapi_backend
+    ports:
+      - "8000:8000"
+    environment:
+      REDIS_HOST: redis
+      QDRANT_HOST: qdrant
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis_storage:
+    driver: local
+  qdrant_storage:
+    driver: local
