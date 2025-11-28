@@ -1,3 +1,5 @@
+
+![Демонс](https://github.com/dxrkravehub/ForteBank/blob/1ff12bfd9c66d5d72d8340f3933800d3c4a84387/ForteBank/demo.gif)
 # 🛡️ ForteGuard Ecosystem 360°
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
